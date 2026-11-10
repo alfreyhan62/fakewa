@@ -68,14 +68,35 @@ function ChatPreview({ chat }) {
 
 function ProfileEditor({ chat }) {
   const update = useChat((state) => state.update)
+  const [source, setSource] = useState('')
+  const [zoom, setZoom] = useState(1)
+  const [x, setX] = useState(0)
+  const [y, setY] = useState(0)
   const photo = (event) => {
     const file = event.target.files?.[0]
     if (!file) return
     const reader = new FileReader()
-    reader.onload = () => update('profile', { photo: reader.result })
+    reader.onload = () => { setSource(reader.result); setZoom(1); setX(0); setY(0) }
     reader.readAsDataURL(file)
+    event.target.value = ''
   }
-  return <div className="editor-form"><label>Foto kontak <span className="upload"><Image /> Upload<input type="file" accept="image/*" onChange={photo} /></span></label><label>Nama kontak<input value={chat.profile.name} onChange={(e) => update('profile', { name: e.target.value })} /></label><label>Nomor telepon<input value={chat.profile.phone} onChange={(e) => update('profile', { phone: e.target.value })} /></label><label>Status<select value={chat.profile.presence} onChange={(e) => update('profile', { presence: e.target.value })}><option value="online">online</option><option value="sedang mengetik...">sedang mengetik...</option><option value="terakhir dilihat hari ini pukul 20.30">terakhir dilihat hari ini pukul 20.30</option><option value="">Kosong</option></select></label></div>
+  const applyCrop = () => {
+    const image = new window.Image()
+    image.onload = () => {
+      const canvas = document.createElement('canvas')
+      canvas.width = canvas.height = 600
+      const context = canvas.getContext('2d')
+      const base = Math.max(600 / image.width, 600 / image.height)
+      const scale = base * zoom
+      const width = image.width * scale
+      const height = image.height * scale
+      context.drawImage(image, (600 - width) / 2 + x * 180, (600 - height) / 2 + y * 180, width, height)
+      update('profile', { photo: canvas.toDataURL('image/jpeg', .92) })
+      setSource('')
+    }
+    image.src = source
+  }
+  return <div className="editor-form"><label>Foto kontak <span className="upload"><Image /> Upload atau kamera<input type="file" accept="image/*" capture="user" onChange={photo} /></span></label>{source && <div className="cropper"><div className="crop-preview"><img src={source} alt="Pratinjau crop" style={{ transform: `translate(${x * 50}%, ${y * 50}%) scale(${zoom})` }} /></div><label>Zoom<input type="range" min="1" max="2.5" step=".01" value={zoom} onChange={(e) => setZoom(Number(e.target.value))} /></label><label>Geser horizontal<input type="range" min="-1" max="1" step=".01" value={x} onChange={(e) => setX(Number(e.target.value))} /></label><label>Geser vertikal<input type="range" min="-1" max="1" step=".01" value={y} onChange={(e) => setY(Number(e.target.value))} /></label><button type="button" className="apply-crop" onClick={applyCrop}>Terapkan crop</button></div>}<label>Nama kontak<input value={chat.profile.name} onChange={(e) => update('profile', { name: e.target.value })} /></label><label>Nomor telepon<input value={chat.profile.phone} onChange={(e) => update('profile', { phone: e.target.value })} /></label><label>Status<select value={chat.profile.presence} onChange={(e) => update('profile', { presence: e.target.value })}><option value="online">online</option><option value="sedang mengetik...">sedang mengetik...</option><option value="terakhir dilihat hari ini pukul 20.30">terakhir dilihat hari ini pukul 20.30</option><option value="">Kosong</option></select></label></div>
 }
 
 function MessagesEditor({ chat }) {
