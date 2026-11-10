@@ -90,7 +90,7 @@ function ProfileEditor({ chat }) {
       const scale = base * zoom
       const width = image.width * scale
       const height = image.height * scale
-      context.drawImage(image, (600 - width) / 2 + x * 180, (600 - height) / 2 + y * 180, width, height)
+      context.drawImage(image, (600 - width) / 2 + x * Math.abs(600 - width) / 2, (600 - height) / 2 + y * Math.abs(600 - height) / 2, width, height)
       update('profile', { photo: canvas.toDataURL('image/jpeg', .92) })
       setSource('')
     }
