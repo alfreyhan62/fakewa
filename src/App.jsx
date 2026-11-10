@@ -1,19 +1,17 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { toPng } from 'html-to-image'
-import { Camera, Check, ChevronDown, Download, FileDown, FileUp, GripVertical, Image, LockKeyhole, Mic, Paperclip, Plus, Save, Smile, Trash2 } from 'lucide-react'
+import { Camera, Check, ChevronDown, Download, FileDown, FileUp, GripVertical, Image, Mic, Paperclip, Plus, Save, Smile, Trash2 } from 'lucide-react'
 import { create } from 'zustand'
 import navbarAtas from './assets/navbaratas.png'
 import './App.css'
 
 const initialChat = {
-  profile: { name: 'Dinda', phone: '0812 3456 7890', presence: 'online', photo: '' },
+  profile: { name: 'Dinda', phone: '+62 8', presence: 'online', photo: '' },
   appearance: { theme: 'light', wallpaper: 'doodle' },
   ui: { statusTime: '21.52', battery: '33' },
   messages: [
-    { id: '1', sender: 'contact', text: 'Haiii, lagi apa? 😄', time: '20.42', receipt: 'sent' },
-    { id: '2', sender: 'me', text: 'Halo juga! Lagi santai di rumah.', time: '20.43', receipt: 'read' },
-    { id: '3', sender: 'contact', text: 'Besok jadi ketemu?', time: '20.44', receipt: 'sent' },
-    { id: '4', sender: 'me', text: 'Jadi dong, jam seperti biasa ya.', time: '20.45', receipt: 'delivered' },
+    { id: '1', sender: 'me', text: 'Halo juga! Lagi santai di rumah.', time: '20.43', receipt: 'read' },
+    { id: '2', sender: 'contact', text: 'tes', time: '03.21', receipt: 'sent' },
   ],
 }
 
@@ -30,8 +28,26 @@ const useChat = create((set) => ({
 
 const receiptIcon = (receipt) => receipt === 'sent' ? <Check className="single-check" /> : <span className={`double-check ${receipt === 'read' ? 'read' : ''}`}><Check /><Check /></span>
 
-function StatusBar({ time, battery }) {
-  return <div className="status-bar"><div className="status-left"><b>{time || '21.52'}</b></div><div className="status-icons"><img src={navbarAtas} alt="Status jaringan" /><span>{battery || '33'}</span></div></div>
+function StatusBar({ battery }) {
+  const [time, setTime] = useState(() => new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }).replace('.', ':'))
+  const [deviceBattery, setDeviceBattery] = useState(null)
+  useEffect(() => {
+    const updateTime = () => setTime(new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }).replace('.', ':'))
+    const interval = setInterval(updateTime, 60000)
+    return () => clearInterval(interval)
+  }, [])
+  useEffect(() => {
+    if (!navigator.getBattery) return
+    let manager
+    const updateBattery = () => setDeviceBattery(String(Math.round(manager.level * 100)))
+    navigator.getBattery().then((batteryManager) => {
+      manager = batteryManager
+      updateBattery()
+      manager.addEventListener('levelchange', updateBattery)
+    })
+    return () => manager?.removeEventListener('levelchange', updateBattery)
+  }, [])
+  return <div className="status-bar"><div className="status-left"><span>{time}</span></div><div className="status-icons"><img src={navbarAtas} alt="Status jaringan" /><span>{deviceBattery ?? battery ?? '33'}</span></div></div>
 }
 
 function ChatPreview({ chat }) {
@@ -59,9 +75,9 @@ function ChatPreview({ chat }) {
     } finally { setExporting(false) }
   }
   return <section className={`preview-wrap ${fullscreen ? 'fullscreen' : ''}`}><div className="preview-actions"><button type="button" className="preview-toggle" onClick={() => setFullscreen(!fullscreen)}>{fullscreen ? 'Tutup preview' : 'Preview layar penuh'}</button><button type="button" onClick={exportPng} disabled={exporting}><Download /> {exporting ? 'Menyimpan' : 'PNG 720×1600'}</button></div><div className="preview-viewport" ref={viewportRef}><div className={`phone ${appearance.theme}`} ref={previewRef} style={fullscreen ? { transform: `scale(${fullscreenScale})` } : undefined}>
-    <StatusBar time={ui?.statusTime} battery={ui?.battery} />
+    <StatusBar battery={ui?.battery} />
     <header className="chat-header"><img className="header-icon back-icon" src="/header-icons/back.png" alt="Kembali" /><div className="avatar">{profile.photo ? <img src={profile.photo} alt="Foto kontak" /> : profile.name.slice(0, 1)}</div><div className="contact"><strong>{profile.name || 'Nama kontak'}</strong><small>{profile.presence}</small></div><div className="header-actions"><img className="header-icon video-icon" src="/header-icons/account.png" alt="Panggilan video" /><img className="header-icon" src="/header-icons/phone.png" alt="Telepon" /><span className="header-caret">▾</span><img className="header-icon menu-icon" src="/header-icons/menu.png" alt="Menu" /></div></header>
-    <main className={`messages ${appearance.wallpaper}`}><div className="simulation">SIMULASI</div><div className="date-chip">Hari ini</div><div className="encryption"><LockKeyhole /> Pesan dan telepon terenkripsi secara end-to-end. Hanya orang di obrolan ini yang bisa membaca, mendengarkan, atau membagikannya. <b>Pelajari selengkapnya.</b></div>{messages.map((message) => <div className={`message ${message.sender}`} key={message.id}><span>{message.text}</span><span className="meta">{message.time} {message.sender === 'me' && <i>{receiptIcon(message.receipt)}</i>}</span></div>)}</main>
+    <main className={`messages ${appearance.wallpaper}`}><div className="simulation">SIMULASI</div><div className="date-chip">Hari ini</div><div className="encryption"><svg className="encryption-lock" viewBox="0 0 16 16" aria-hidden="true"><path d="M11.5 6V4.75a3.5 3.5 0 0 0-7 0V6H3.75A1.75 1.75 0 0 0 2 7.75v5.5C2 14.22 2.78 15 3.75 15h8.5c.97 0 1.75-.78 1.75-1.75v-5.5C14 6.78 13.22 6 12.25 6h-.75ZM6 4.75a2 2 0 1 1 4 0V6H6V4.75Zm2 7.5a1.25 1.25 0 1 1 0-2.5 1.25 1.25 0 0 1 0 2.5Z" /></svg> Pesan dan telepon terenkripsi secara end-to-end. Hanya orang di obrolan ini yang bisa membaca, mendengarkan, atau membagikannya. <b>Pelajari selengkapnya.</b></div>{messages.map((message) => <div className={`message ${message.sender}`} key={message.id}><span>{message.text}</span><span className="meta">{message.time} {message.sender === 'me' && <i>{receiptIcon(message.receipt)}</i>}</span></div>)}</main>
     <div className="composer"><div className="input"><Smile /><span>Ketik pesan</span><Paperclip /><Camera /></div><button type="button" aria-label="Rekam suara"><Mic /></button></div>
   </div></div></section>
 }
@@ -110,7 +126,7 @@ function MessagesEditor({ chat }) {
 
 function AppearanceEditor({ chat }) {
   const update = useChat((state) => state.update)
-  return <div className="editor-form choices"><label>Jam status bar<input type="time" value={(chat.ui?.statusTime || '21.52').replace('.', ':')} onChange={(e) => update('ui', { statusTime: e.target.value.replace(':', '.') })} /></label><label>Baterai<input inputMode="numeric" maxLength="3" value={chat.ui?.battery || '33'} onChange={(e) => update('ui', { battery: e.target.value.replace(/\D/g, '') })} /></label><label>Tema<div><button className={chat.appearance.theme === 'light' ? 'selected' : ''} type="button" onClick={() => update('appearance', { theme: 'light' })}>Terang</button><button className={chat.appearance.theme === 'dark' ? 'selected' : ''} type="button" onClick={() => update('appearance', { theme: 'dark' })}>Gelap</button></div></label><label>Wallpaper<select value={chat.appearance.wallpaper} onChange={(e) => update('appearance', { wallpaper: e.target.value })}><option value="doodle">Doodle WhatsApp</option><option value="plain">Polos</option><option value="mint">Mint</option></select></label></div>
+  return <div className="editor-form choices"><label>Jam status bar<input type="time" value={(chat.ui?.statusTime || '21.52').replace('.', ':')} onChange={(e) => update('ui', { statusTime: e.target.value.replace(':', '.') })} /></label><label>Baterai<input inputMode="numeric" maxLength="3" value={chat.ui?.battery ?? '33'} onChange={(e) => update('ui', { battery: e.target.value.replace(/\D/g, '') })} /></label></div>
 }
 
 function App() {
