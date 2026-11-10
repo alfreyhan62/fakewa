@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { toPng } from 'html-to-image'
+import { toJpeg } from 'html-to-image'
 import { Camera, Check, ChevronDown, Download, FileDown, FileUp, GripVertical, Image, Mic, Paperclip, Plus, Save, Smile, Trash2 } from 'lucide-react'
 import { create } from 'zustand'
 import navbarAtas from './assets/navbaratas.png'
@@ -67,14 +67,14 @@ function ChatPreview({ chat }) {
   const exportPng = async () => {
     setExporting(true)
     try {
-      const dataUrl = await toPng(previewRef.current, { pixelRatio: 1, cacheBust: true, width: 720, height: 1600, style: { transform: 'none' } })
+      const dataUrl = await toJpeg(previewRef.current, { pixelRatio: 1, cacheBust: true, quality: .95, width: 720, height: 1600, style: { transform: 'none' } })
       const link = document.createElement('a')
-      link.download = 'wa-chat-simulasi.png'
+      link.download = 'wa-chat-simulasi.jpg'
       link.href = dataUrl
       link.click()
     } finally { setExporting(false) }
   }
-  return <section className={`preview-wrap ${fullscreen ? 'fullscreen' : ''}`}><div className="preview-actions"><button type="button" className="preview-toggle" onClick={() => setFullscreen(!fullscreen)}>{fullscreen ? 'Tutup preview' : 'Preview layar penuh'}</button><button type="button" onClick={exportPng} disabled={exporting}><Download /> {exporting ? 'Menyimpan' : 'PNG 720×1600'}</button></div><div className="preview-viewport" ref={viewportRef}><div className={`phone ${appearance.theme}`} ref={previewRef} style={fullscreen ? { transform: `scale(${fullscreenScale})` } : undefined}>
+  return <section className={`preview-wrap ${fullscreen ? 'fullscreen' : ''}`}><div className="preview-actions"><button type="button" className="preview-toggle" onClick={() => setFullscreen(!fullscreen)}>{fullscreen ? 'Tutup preview' : 'Preview layar penuh'}</button><button type="button" onClick={exportPng} disabled={exporting}><Download /> {exporting ? 'Menyimpan' : 'JPG 720×1600'}</button></div><div className="preview-viewport" ref={viewportRef}><div className={`phone ${appearance.theme}`} ref={previewRef} style={fullscreen ? { transform: `scale(${fullscreenScale})` } : undefined}>
     <StatusBar battery={ui?.battery} />
     <header className="chat-header"><img className="header-icon back-icon" src="/header-icons/back.png" alt="Kembali" /><div className="avatar">{profile.photo ? <img src={profile.photo} alt="Foto kontak" /> : profile.name.slice(0, 1)}</div><div className="contact"><strong>{profile.name || 'Nama kontak'}</strong><small>{profile.presence}</small></div><div className="header-actions"><img className="header-icon video-icon" src="/header-icons/account.png" alt="Panggilan video" /><img className="header-icon" src="/header-icons/phone.png" alt="Telepon" /><span className="header-caret">▾</span><img className="header-icon menu-icon" src="/header-icons/menu.png" alt="Menu" /></div></header>
     <main className={`messages ${appearance.wallpaper}`}><div className="simulation">SIMULASI</div><div className="date-chip">Hari ini</div><div className="encryption"><svg className="encryption-lock" viewBox="0 0 16 16" aria-hidden="true"><path d="M11.5 6V4.75a3.5 3.5 0 0 0-7 0V6H3.75A1.75 1.75 0 0 0 2 7.75v5.5C2 14.22 2.78 15 3.75 15h8.5c.97 0 1.75-.78 1.75-1.75v-5.5C14 6.78 13.22 6 12.25 6h-.75ZM6 4.75a2 2 0 1 1 4 0V6H6V4.75Zm2 7.5a1.25 1.25 0 1 1 0-2.5 1.25 1.25 0 0 1 0 2.5Z" /></svg> Pesan dan telepon terenkripsi secara end-to-end. Hanya orang di obrolan ini yang bisa membaca, mendengarkan, atau membagikannya. <b>Pelajari selengkapnya.</b></div>{messages.map((message) => <div className={`message ${message.sender}`} key={message.id}><span>{message.text}</span><span className="meta">{message.time} {message.sender === 'me' && <i>{receiptIcon(message.receipt)}</i>}</span></div>)}</main>
