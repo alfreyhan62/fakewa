@@ -1,0 +1,42 @@
+erDiagram
+    CHAT_SESSION ||--o{ CHAT_MESSAGE : contains
+    CHAT_SESSION ||--|| CHAT_PROFILE : has
+    CHAT_SESSION ||--|| CHAT_APPEARANCE : uses
+
+    CHAT_SESSION {
+        string id PK
+        string title
+        string createdAt
+        string updatedAt
+    }
+
+    CHAT_PROFILE {
+        string sessionId PK,FK
+        string contactName
+        string contactPhoto
+        string phoneNumber
+        string presence
+        string lastSeenText
+    }
+
+    CHAT_APPEARANCE {
+        string sessionId PK,FK
+        string theme
+        string wallpaper
+        string statusBarMode
+        string navigationBarMode
+    }
+
+    CHAT_MESSAGE {
+        string id PK
+        string sessionId FK
+        string sender
+        string type
+        string text
+        string mediaData
+        string time
+        string dateLabel
+        string receiptStatus
+        string replyToMessageId FK
+        int sortOrder
+    }

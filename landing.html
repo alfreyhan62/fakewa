@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+
+<html lang="id"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>WA Chat Studio - Buat Chat WhatsApp Palsu dengan Mudah</title>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS v3 -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'Inter', 'sans-serif'],
+            wa: ['Inter', 'system-ui', 'sans-serif']
+          },
+          colors: {
+            brand: {
+              DEFAULT: '#00A884',
+              hover: '#008f6f',
+              dark: '#075E54',
+              teal: '#128C7E',
+              light: '#25D366',
+              bgLight: '#E8F7F0',
+            },
+            wa: {
+              header: '#005E54',
+              headerDark: '#1F2C34',
+              bodyDark: '#0B141A',
+              bubbleDarkIncoming: '#1F2C34',
+              bubbleDarkOutgoing: '#005C4B',
+              bubbleLightIncoming: '#FFFFFF',
+              bubbleLightOutgoing: '#E7FFDB',
+              patternBg: '#EFEAE2',
+              blueCheck: '#53BDEB'
+            }
+          },
+          boxShadow: {
+            'phone': '0 25px 60px -15px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(0, 0, 0, 0.08)',
+            'card': '0 10px 30px -5px rgba(0, 0, 0, 0.04), 0 2px 6px -1px rgba(0, 0, 0, 0.02)',
+            'button': '0 12px 24px -6px rgba(0, 168, 132, 0.45)'
+          }
+        }
+      }
+    }
+  </script>
+<!-- BEGIN: Custom Styles -->
+<style data-purpose="whatsapp-pattern">
+    /* WhatsApp Chat Doodle Pattern Background */
+    .wa-chat-bg {
+      background-color: #EFEAE2;
+      background-image: radial-gradient(#d5cdc4 1px, transparent 1px), radial-gradient(#d5cdc4 1px, #efeae2 1px);
+      background-size: 20px 20px;
+      background-position: 0 0, 10px 10px;
+    }
+    .wa-chat-bg-dark {
+      background-color: #0b141a;
+      background-image: radial-gradient(#1e2d36 1px, transparent 1px), radial-gradient(#1e2d36 1px, #0b141a 1px);
+      background-size: 20px 20px;
+      background-position: 0 0, 10px 10px;
+    }
+  </style>
+<style data-purpose="decorations">
+    /* Subtle organic curved backdrops */
+    .hero-gradient-shape {
+      position: absolute;
+      top: -120px;
+      right: -80px;
+      width: 750px;
+      height: 750px;
+      background: radial-gradient(circle at 60% 40%, rgba(74, 222, 128, 0.35) 0%, rgba(34, 197, 94, 0.2) 40%, rgba(240, 253, 244, 0) 75%);
+      border-radius: 50%;
+      filter: blur(40px);
+      z-index: 0;
+      pointer-events: none;
+    }
+    .hero-pill-badge {
+      position: relative;
+    }
+  </style>
+<!-- END: Custom Styles -->
+</head>
+<body class="bg-[#F8FAF9] text-gray-800 font-sans antialiased overflow-x-hidden selection:bg-brand selection:text-white">
+<!-- BEGIN: SiteHeader -->
+<header class="w-full max-w-7xl mx-auto px-6 pt-7 pb-4 flex items-center justify-between relative z-20">
+<div class="flex items-center gap-3">
+<!-- WhatsApp Logo Icon -->
+<div class="w-11 h-11 bg-[#25D366] rounded-full flex items-center justify-center shadow-md shadow-green-500/20">
+<svg class="w-6 h-6 fill-white" viewbox="0 0 24 24">
+<path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"></path>
+</svg>
+</div>
+<span class="text-2xl font-extrabold tracking-tight text-gray-900">WA Chat Studio</span>
+</div>
+</header>
+<!-- END: SiteHeader -->
+<!-- BEGIN: HeroSection -->
+<section class="relative max-w-7xl mx-auto px-6 pt-6 pb-16 lg:pb-24 overflow-hidden">
+<!-- Curved ambient green glow -->
+<div class="hero-gradient-shape"></div>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center relative z-10">
+<!-- Hero Left: Typography & Action -->
+<div class="lg:col-span-6 space-y-7">
+<!-- Decorative subtle dash burst icon -->
+<div class="inline-flex items-center">
+<div class="flex gap-1.5 ml-28 -mb-3 text-[#25D366]">
+<span class="w-1 h-3 rounded-full bg-[#25D366] -rotate-45 transform"></span>
+<span class="w-1 h-4 rounded-full bg-[#25D366] -translate-y-1"></span>
+<span class="w-1 h-3 rounded-full bg-[#25D366] rotate-45 transform"></span>
+</div>
+</div>
+<!-- Main Headline -->
+<h1 class="text-4xl sm:text-5xl lg:text-[3.5rem] font-extrabold text-gray-900 leading-[1.15] tracking-tight">
+          Buat Chat <span class="text-[#00A884]">WhatsApp</span> Palsu dengan Mudah
+        </h1>
+<!-- Subheading -->
+<p class="text-lg sm:text-xl text-gray-600 max-w-lg leading-relaxed font-normal">
+          Atur percakapan, ubah foto profil, tentukan waktu, dan download hasilnya dengan cepat.
+        </p>
+<!-- CTA Action Button -->
+<div class="pt-2">
+<a class="inline-flex items-center gap-3 px-8 py-4 rounded-full bg-[#00A884] hover:bg-[#008f6f] text-white font-bold text-lg shadow-button transition-all duration-300 transform hover:-translate-y-0.5 active:translate-y-0" href="#editor">
+<span class="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center text-xs">
+              ▶
+            </span>
+<span>Mulai Sekarang</span>
+<span class="text-xl font-bold ml-1">→</span>
+</a>
+</div>
+</div>
+<!-- Hero Right: Realistic Phone Mockup -->
+<div class="lg:col-span-6 flex justify-center lg:justify-end">
+<!-- Smartphone Container -->
+<div class="w-full max-w-[340px] sm:max-w-[360px] bg-black rounded-[46px] p-3 shadow-phone border-[5px] border-[#202428] relative">
+<!-- Inner Phone Screen -->
+<div class="w-full bg-[#EFEAE2] rounded-[38px] overflow-hidden flex flex-col font-wa text-[13px] relative shadow-inner">
+<!-- Android Status Bar -->
+<div class="bg-[#005E54] text-white px-5 pt-2.5 pb-1 flex justify-between items-center text-[11px] font-medium tracking-tight">
+<span>20.45</span>
+<!-- Top Camera Punch Hole Notch -->
+<div class="w-4 h-4 bg-black rounded-full mx-auto -mt-1 shadow-inner border border-zinc-800"></div>
+<div class="flex items-center gap-1.5 text-[11px]">
+<!-- Signal icon -->
+<svg class="w-3.5 h-3.5 fill-current" viewbox="0 0 24 24"><path d="M12 3c-4.97 0-9 4.03-9 9 0 2.12.74 4.07 1.97 5.61L4.35 19.4c-.39.39-.39 1.02 0 1.41.39.39 1.02.39 1.41 0l1.9-1.9C9.22 19.57 10.57 20 12 20c4.97 0 9-4.03 9-9s-4.03-9-9-9z" opacity="0.3"></path><path d="M12 6c-3.31 0-6 2.69-6 6 0 1.4.48 2.69 1.3 3.71L6.7 16.3c-.39.39-.39 1.02 0 1.41.39.39 1.02.39 1.41 0l1.58-1.58C10.51 16.63 11.23 17 12 17c3.31 0 6-2.69 6-6s-2.69-6-6-6z"></path></svg>
+<!-- Battery Indicator with percentage -->
+<div class="flex items-center gap-0.5">
+<span class="text-[10px]">85%</span>
+<div class="w-5 h-2.5 border border-white/80 rounded-[3px] p-[1px] flex items-center">
+<div class="w-3.5 h-full bg-white rounded-[1px]"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- WhatsApp Header Bar -->
+<div class="bg-[#005E54] text-white px-3 py-2 flex items-center justify-between shadow-md">
+<div class="flex items-center gap-2">
+<!-- Back arrow -->
+<svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" stroke-width="2.5" viewbox="0 0 24 24">
+<path d="M10 19l-7-7m0 0l7-7m-7 7h18" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+<!-- Avatar & Name -->
+<div class="flex items-center gap-2.5">
+<img alt="Dinda Avatar" class="w-9 h-9 rounded-full object-cover border border-white/20" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAW7JP91EzPTCUBX6Bkyxwcbn7T8w4u0B_Q4PcePuBHhqA_oL9Eo-GnmesReV9Wsifw19H7MNE2VRQJHdqTQ7LG_qOkGvD6uUKS3hCM3-LZH2CXGJ_bTNVbQbrHL0Th65Lh2vhciGh3SogHJWrmV7km-YgB80zl_WqEZjJKks4Aj7MOsXtwYtac3RaSyIoq7RpSLcf8gdYjR0lP3Qxc1EkTkuypEhIok3A6afiambox"/>
+<div>
+<div class="font-semibold text-sm leading-tight flex items-center gap-1">
+                      Dinda <span class="text-xs">💕</span>
+</div>
+<div class="text-[11px] text-emerald-100 font-normal opacity-90 leading-tight">online</div>
+</div>
+</div>
+</div>
+<!-- Top Call & Options Actions -->
+<div class="flex items-center gap-4 text-white">
+<!-- Video Call -->
+<svg class="w-5 h-5 fill-current" viewbox="0 0 24 24"><path d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z"></path></svg>
+<!-- Voice Call -->
+<svg class="w-4.5 h-4.5 fill-current" viewbox="0 0 24 24"><path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56a.977.977 0 0 0-1.01.24l-1.57 1.97c-2.83-1.35-5.43-3.9-6.63-6.49l1.97-1.57c.28-.28.37-.69.25-1.02A11.36 11.36 0 0 1 8.5 4.41c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1 0 9.39 7.61 17 17 17 .55 0 1-.45 1-1v-3.5c0-.55-.45-1-.99-1z"></path></svg>
+<!-- Three Dots -->
+<svg class="w-5 h-5 fill-current" viewbox="0 0 24 24"><path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"></path></svg>
+</div>
+</div>
+<!-- WhatsApp Chat Area -->
+<div class="wa-chat-bg p-3.5 flex flex-col space-y-3 min-h-[350px]">
+<!-- Incoming Message 1 -->
+<div class="self-start max-w-[80%] bg-white rounded-lg rounded-tl-none p-2 shadow-sm relative">
+<span class="text-gray-900 leading-snug">Haiii 😄</span>
+<span class="text-[10px] text-gray-400 float-right mt-1 ml-3">20.42</span>
+</div>
+<!-- Outgoing Message 1 -->
+<div class="self-end max-w-[80%] bg-[#E7FFDB] rounded-lg rounded-tr-none p-2 shadow-sm relative">
+<span class="text-gray-900 leading-snug">Halo juga! 👋</span>
+<div class="float-right flex items-center gap-1 mt-1 ml-3">
+<span class="text-[10px] text-gray-500">20.43</span>
+<span class="text-[#53BDEB] font-bold text-[11px] leading-none">✓✓</span>
+</div>
+</div>
+<!-- Incoming Message 2 -->
+<div class="self-start max-w-[80%] bg-white rounded-lg rounded-tl-none p-2 shadow-sm relative">
+<span class="text-gray-900 leading-snug">Lagi ngapain?</span>
+<span class="text-[10px] text-gray-400 float-right mt-1 ml-3">20.44</span>
+</div>
+<!-- Outgoing Message 2 -->
+<div class="self-end max-w-[85%] bg-[#E7FFDB] rounded-lg rounded-tr-none p-2 shadow-sm relative">
+<span class="text-gray-900 leading-snug">Santai aja, kamu?</span>
+<div class="float-right flex items-center gap-1 mt-1 ml-3">
+<span class="text-[10px] text-gray-500">20.44</span>
+<span class="text-[#53BDEB] font-bold text-[11px] leading-none">✓✓</span>
+</div>
+</div>
+<!-- Incoming Message 3 -->
+<div class="self-start max-w-[85%] bg-white rounded-lg rounded-tl-none p-2 shadow-sm relative">
+<span class="text-gray-900 leading-snug">Aku juga hehe 😄</span>
+<span class="text-[10px] text-gray-400 float-right mt-1 ml-3">20.45</span>
+</div>
+</div>
+<!-- WhatsApp Message Input Bottom Bar -->
+<div class="p-2 wa-chat-bg flex items-center gap-1.5 border-t border-black/5">
+<!-- Pill Input -->
+<div class="flex-1 bg-white rounded-full px-3 py-2 flex items-center gap-2 shadow-sm">
+<!-- Emoji Icon -->
+<svg class="w-5 h-5 text-gray-400 shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewbox="0 0 24 24">
+<path d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+<span class="text-gray-400 text-xs flex-1 select-none">Ketik pesan</span>
+<!-- Attachment Icon -->
+<svg class="w-4 h-4 text-gray-400 rotate-45 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+<path d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+<!-- Camera Icon -->
+<svg class="w-4 h-4 text-gray-400 shrink-0" fill="currentColor" viewbox="0 0 24 24">
+<path d="M12 15.2a3.2 3.2 0 100-6.4 3.2 3.2 0 000 6.4z"></path>
+<path d="M9 2L7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-3.17L15 2H9zm3 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z"></path>
+</svg>
+</div>
+<!-- Audio Record Mic Circle Button -->
+<div class="w-10 h-10 rounded-full bg-[#00A884] flex items-center justify-center text-white shadow-md shrink-0">
+<svg class="w-5 h-5 fill-current" viewbox="0 0 24 24">
+<path d="M12 14c1.66 0 2.99-1.34 2.99-3L15 5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.3-3c0 3-2.54 5.1-5.3 5.1S6.7 14 6.7 11H5c0 3.41 2.72 6.23 6 6.72V21h2v-3.28c3.28-.48 6-3.3 6-6.72h-1.7z"></path>
+</svg>
+</div>
+</div>
+<!-- Android Navigation Bar Indicator -->
+<div class="bg-white py-1 flex justify-around items-center px-12 border-t border-gray-100">
+<div class="w-3.5 h-3.5 border-2 border-gray-500 rounded-sm"></div>
+<div class="w-3.5 h-3.5 rounded-full border-2 border-gray-500"></div>
+<div class="w-0 h-0 border-y-[6px] border-y-transparent border-r-[8px] border-r-gray-500"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- END: HeroSection -->
+<!-- BEGIN: FeatureCardsSection -->
+<section class="max-w-7xl mx-auto px-6 py-10" data-purpose="feature-grid">
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+<!-- Feature Card 1 -->
+<div class="bg-white rounded-3xl p-7 text-center shadow-card hover:shadow-lg transition-all duration-300 border border-gray-100/80 flex flex-col items-center">
+<!-- Icon badge -->
+<div class="w-14 h-14 rounded-full bg-[#E3F8EB] text-[#00A884] flex items-center justify-center mb-5">
+<svg class="w-7 h-7 fill-current" viewbox="0 0 24 24">
+<path d="M7 2v11h3v9l7-12h-4l4-8z"></path>
+</svg>
+</div>
+<h3 class="text-xl font-bold text-gray-900 mb-2">Mudah Digunakan</h3>
+<p class="text-sm text-gray-500 leading-relaxed font-normal">
+          Interface simpel<br/>dan mirip WhatsApp asli
+        </p>
+</div>
+<!-- Feature Card 2 -->
+<div class="bg-white rounded-3xl p-7 text-center shadow-card hover:shadow-lg transition-all duration-300 border border-gray-100/80 flex flex-col items-center">
+<!-- Icon badge -->
+<div class="w-14 h-14 rounded-full bg-[#E3F8EB] text-[#00A884] flex items-center justify-center mb-5">
+<svg 2.2"="" class="w-7 h-7 fill-none stroke-currentColor stroke-width=" viewbox="0 0 24 24">
+<path d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</div>
+<h3 class="text-xl font-bold text-gray-900 mb-2">Fitur Lengkap</h3>
+<p class="text-sm text-gray-500 leading-relaxed font-normal">
+          Atur pesan, waktu,<br/>dan tampilan
+        </p>
+</div>
+<!-- Feature Card 3 -->
+<div class="bg-white rounded-3xl p-7 text-center shadow-card hover:shadow-lg transition-all duration-300 border border-gray-100/80 flex flex-col items-center">
+<!-- Icon badge -->
+<div class="w-14 h-14 rounded-full bg-[#E3F8EB] text-[#00A884] flex items-center justify-center mb-5">
+<svg 2.2"="" class="w-7 h-7 fill-none stroke-currentColor stroke-width=" viewbox="0 0 24 24">
+<rect height="20" rx="3" stroke-width="2.2" width="14" x="5" y="2"></rect>
+<line stroke-linecap="round" stroke-width="2.5" x1="12" x2="12.01" y1="18" y2="18"></line>
+</svg>
+</div>
+<h3 class="text-xl font-bold text-gray-900 mb-2">Realistis</h3>
+<p class="text-sm text-gray-500 leading-relaxed font-normal">
+          Tampilan sesuai<br/>Android kamu
+        </p>
+</div>
+<!-- Feature Card 4 -->
+<div class="bg-white rounded-3xl p-7 text-center shadow-card hover:shadow-lg transition-all duration-300 border border-gray-100/80 flex flex-col items-center">
+<!-- Icon badge -->
+<div class="w-14 h-14 rounded-full bg-[#E3F8EB] text-[#00A884] flex items-center justify-center mb-5">
+<svg 2.5"="" class="w-7 h-7 fill-none stroke-currentColor stroke-width=" viewbox="0 0 24 24">
+<path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</div>
+<h3 class="text-xl font-bold text-gray-900 mb-2">Download Instan</h3>
+<p class="text-sm text-gray-500 leading-relaxed font-normal">
+          Simpan hasil chat<br/>sebagai gambar
+        </p>
+</div>
+</div>
+</section>
+<!-- END: FeatureCardsSection -->
+<!-- BEGIN: ShowcaseFeatureSection -->
+<section class="max-w-7xl mx-auto px-6 py-16 lg:py-24">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
+<!-- Showcase Left: Angled Mockups (Dark Mode & Light Mode) -->
+<div class="lg:col-span-6 relative flex justify-center items-center py-6">
+<div class="relative w-full max-w-[480px] h-[340px] flex items-center justify-center">
+<!-- Overlapping Light Mode Phone (Right Background) -->
+<div class="absolute right-0 top-3 w-[270px] bg-black rounded-[36px] p-2.5 shadow-2xl border-4 border-gray-300 transform rotate-[3deg] z-10">
+<div class="w-full bg-[#EFEAE2] rounded-[28px] overflow-hidden text-[11px] font-wa flex flex-col">
+<!-- Mini Header -->
+<div class="bg-[#005E54] text-white px-3 py-2 flex items-center justify-between">
+<div class="flex items-center gap-1.5">
+<span class="text-white text-xs">←</span>
+<img alt="Sarah" class="w-6 h-6 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA_U9dVKhMzthi_stHJF6i07p9R1QvaR_w0hWM_9VtOnLNbd2otwGMQ92uoPYQtYKSC5H6bdeOqeUGTmehNWC_eDIrbdoN5K8Hyx4YvPl_PdXQ4E8JGmc_L8RYpXCXZpxvecYQfvWo3idi4dTuOAXDM3pOmX8SC0UPd0cBxrJb4hhNmSSa-O5lqopouDqAnMD1hCuypto4IEWH0-Lhb9ZFXZ2eeVC6frPflo1yheM2J"/>
+<div>
+<div class="font-semibold text-xs leading-none">Sarah 💕</div>
+<div class="text-[9px] text-green-100 opacity-80 scale-90 -ml-1">online</div>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<span class="text-xs">📹</span>
+<span class="text-xs">📞</span>
+<span class="text-xs">⋮</span>
+</div>
+</div>
+<!-- Mini Chat Light Area -->
+<div class="wa-chat-bg p-3 space-y-2 min-h-[170px]">
+<div class="self-start max-w-[85%] bg-white rounded-lg p-1.5 shadow-sm text-gray-800">
+                  Besok jadi? <span class="text-[8px] text-gray-400 ml-1">16.30</span>
+</div>
+<div class="self-end max-w-[85%] bg-[#E7FFDB] rounded-lg p-1.5 shadow-sm ml-auto text-gray-800">
+                  Jadi dong! <span class="text-[8px] text-gray-400 ml-1">16.31</span>
+<span class="text-[#53BDEB] text-[9px] font-bold">✓✓</span>
+</div>
+</div>
+<!-- Mini Input -->
+<div class="bg-gray-100 px-3 py-1.5 flex items-center justify-between text-gray-400 border-t border-gray-200">
+<span class="text-[10px]">Ketik pesan...</span>
+<span>📷</span>
+</div>
+</div>
+</div>
+<!-- Overlapping Dark Mode Phone (Foreground Left) -->
+<div class="absolute left-0 -top-2 w-[280px] bg-[#1a1f24] rounded-[36px] p-2.5 shadow-2xl border-4 border-[#2c333a] transform -rotate-[4deg] z-20">
+<div class="w-full bg-[#0B141A] rounded-[28px] overflow-hidden text-[11px] font-wa flex flex-col">
+<!-- Mini Dark Status Bar -->
+<div class="bg-[#1F2C34] text-gray-300 px-3 pt-1.5 flex justify-between items-center text-[10px]">
+<span>20.45</span>
+<span class="text-[9px]">85%</span>
+</div>
+<!-- Mini Dark Header -->
+<div class="bg-[#1F2C34] text-white px-3 py-2 flex items-center justify-between border-b border-gray-800">
+<div class="flex items-center gap-2">
+<span class="text-gray-300 text-xs">←</span>
+<img alt="Bapak" class="w-7 h-7 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDxagJGEuHA02JuqmjPp7rRTWEQ1HWp8gcugCe3mSvcq4U3-jnzCzgt6a096P2Ifk-dWdYkKf8Km13OsfbQqF8nBMMy-JtJsAJWoFFDSqrN1c3z4DWJfr7gI4cy5xInFMx9_zFo1EU__r6xjQmpQ6UnCFuk_HS1V_ds34T9GWvPl2DxomaWMCKD224-2-dx5aPpbbl77Q3BUK6G61lBARR9YY7oCUvCjp-tcxtnlO20"/>
+<div>
+<div class="font-semibold text-xs leading-none">Bapak</div>
+<div class="text-[9px] text-gray-400">online</div>
+</div>
+</div>
+<div class="flex items-center gap-2 text-gray-300">
+<svg class="w-3.5 h-3.5 fill-current" viewbox="0 0 24 24"><path d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z"></path></svg>
+<svg class="w-3 h-3 fill-current" viewbox="0 0 24 24"><path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56a.977.977 0 0 0-1.01.24l-1.57 1.97c-2.83-1.35-5.43-3.9-6.63-6.49l1.97-1.57c.28-.28.37-.69.25-1.02A11.36 11.36 0 0 1 8.5 4.41c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1 0 9.39 7.61 17 17 17 .55 0 1-.45 1-1v-3.5c0-.55-.45-1-.99-1z"></path></svg>
+<span class="text-xs">⋮</span>
+</div>
+</div>
+<!-- Mini Chat Dark Area -->
+<div class="wa-chat-bg-dark p-3 space-y-2.5 min-h-[165px]">
+<!-- Dark Incoming Message -->
+<div class="self-start max-w-[85%] bg-[#1F2C34] text-gray-100 rounded-lg p-2 shadow">
+                  Oke siap 👍 <span class="text-[9px] text-gray-400 float-right ml-2 mt-0.5">19.20</span>
+</div>
+<!-- Dark Outgoing Message -->
+<div class="self-end max-w-[85%] bg-[#005C4B] text-gray-100 rounded-lg p-2 shadow ml-auto">
+                  Terima kasih 🙏 <span class="text-[9px] text-emerald-200 float-right ml-2 mt-0.5">19.21</span>
+<span class="text-[#53BDEB] text-[9px] font-bold float-right ml-1">✓✓</span>
+</div>
+</div>
+<!-- Mini Dark Input Bar -->
+<div class="bg-[#1F2C34] px-2.5 py-1.5 flex items-center justify-between text-gray-400">
+<div class="flex items-center gap-1.5">
+<span>😊</span>
+<span class="text-[10px]">Ketik pesan</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span>📎</span>
+<span class="w-6 h-6 rounded-full bg-[#00A884] flex items-center justify-center text-white text-[10px]">🎤</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Showcase Right: List and Benefits -->
+<div class="lg:col-span-6 space-y-6">
+<div>
+<h2 class="text-3xl sm:text-4xl font-extrabold text-gray-900 tracking-tight">
+            Kreasi Chat Tanpa Batas
+          </h2>
+<p class="text-base sm:text-lg font-medium text-gray-700 mt-2">
+            Kamu bisa:
+          </p>
+</div>
+<!-- Benefits Checklist -->
+<ul class="space-y-4">
+<li class="flex items-start gap-3.5">
+<div class="w-6 h-6 rounded-full bg-[#25D366] text-white flex items-center justify-center shrink-0 mt-0.5 shadow-sm">
+<svg class="w-3.5 h-3.5 stroke-current stroke-[3] fill-none" viewbox="0 0 24 24">
+<path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</div>
+<span class="text-base sm:text-lg font-medium text-gray-800">
+              Ganti foto profil &amp; nama kontak
+            </span>
+</li>
+<li class="flex items-start gap-3.5">
+<div class="w-6 h-6 rounded-full bg-[#25D366] text-white flex items-center justify-center shrink-0 mt-0.5 shadow-sm">
+<svg class="w-3.5 h-3.5 stroke-current stroke-[3] fill-none" viewbox="0 0 24 24">
+<path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</div>
+<span class="text-base sm:text-lg font-medium text-gray-800">
+              Tambah pesan dengan waktu tertentu
+            </span>
+</li>
+<li class="flex items-start gap-3.5">
+<div class="w-6 h-6 rounded-full bg-[#25D366] text-white flex items-center justify-center shrink-0 mt-0.5 shadow-sm">
+<svg class="w-3.5 h-3.5 stroke-current stroke-[3] fill-none" viewbox="0 0 24 24">
+<path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</div>
+<span class="text-base sm:text-lg font-medium text-gray-800">
+              Atur centang pesan (<span class="font-normal text-gray-600">✓</span> / <span class="font-normal text-gray-600">✓✓</span> / <span class="text-[#53BDEB] font-semibold">✓✓ biru</span>)
+            </span>
+</li>
+<li class="flex items-start gap-3.5">
+<div class="w-6 h-6 rounded-full bg-[#25D366] text-white flex items-center justify-center shrink-0 mt-0.5 shadow-sm">
+<svg class="w-3.5 h-3.5 stroke-current stroke-[3] fill-none" viewbox="0 0 24 24">
+<path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</div>
+<span class="text-base sm:text-lg font-medium text-gray-800">
+              Ubah wallpaper chat
+            </span>
+</li>
+</ul>
+<!-- Bottom CTA Button -->
+<div class="pt-4">
+<a class="inline-flex items-center gap-2 px-8 py-3.5 rounded-full bg-[#00A884] hover:bg-[#008f6f] text-white font-bold text-base shadow-button transition-all duration-300 transform hover:-translate-y-0.5" href="#editor">
+<span>Mulai Sekarang</span>
+<span class="text-lg">→</span>
+</a>
+</div>
+</div>
+</div>
+</section>
+<!-- END: ShowcaseFeatureSection -->
+<!-- BEGIN: SiteFooter -->
+<footer class="max-w-7xl mx-auto px-6 pt-6 pb-12">
+<!-- Divider Line -->
+<div class="w-full h-px bg-gray-200 mb-8"></div>
+<!-- Centered Brand Attribution -->
+<div class="flex items-center justify-center gap-2 text-sm sm:text-base font-medium text-gray-600">
+<!-- WhatsApp Small Icon -->
+<div class="w-5 h-5 rounded-full bg-[#25D366] flex items-center justify-center text-white shrink-0">
+<svg class="w-3 h-3 fill-current" viewbox="0 0 24 24">
+<path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"></path>
+</svg>
+</div>
+<span>WA Chat Studio</span>
+<span class="text-gray-400">•</span>
+<span>Buat. Atur. Download.</span>
+</div>
+</footer>
+<!-- END: SiteFooter -->
+</body></html>

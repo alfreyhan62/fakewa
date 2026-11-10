@@ -1,0 +1,102 @@
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { toPng } from 'html-to-image'
+import { ArrowLeft, Camera, Check, ChevronDown, Download, FileDown, FileUp, GripVertical, Image, LockKeyhole, Mic, MoreVertical, Paperclip, Phone, Plus, Save, Smile, Trash2, Video, Wifi } from 'lucide-react'
+import { create } from 'zustand'
+import './App.css'
+
+const initialChat = {
+  profile: { name: 'Dinda', phone: '0812 3456 7890', presence: 'online', photo: '' },
+  appearance: { theme: 'light', wallpaper: 'doodle' },
+  ui: { statusTime: '21.52' },
+  messages: [
+    { id: '1', sender: 'contact', text: 'Haiii, lagi apa? 😄', time: '20.42', receipt: 'sent' },
+    { id: '2', sender: 'me', text: 'Halo juga! Lagi santai di rumah.', time: '20.43', receipt: 'read' },
+    { id: '3', sender: 'contact', text: 'Besok jadi ketemu?', time: '20.44', receipt: 'sent' },
+    { id: '4', sender: 'me', text: 'Jadi dong, jam seperti biasa ya.', time: '20.45', receipt: 'delivered' },
+  ],
+}
+
+const loadChat = () => {
+  try { return JSON.parse(localStorage.getItem('wa-chat-studio')) || initialChat } catch { return initialChat }
+}
+
+const useChat = create((set) => ({
+  chat: loadChat(),
+  setChat: (chat) => set({ chat }),
+  update: (section, values) => set((state) => ({ chat: { ...state.chat, [section]: { ...state.chat[section], ...values } } })),
+  setMessages: (messages) => set((state) => ({ chat: { ...state.chat, messages } })),
+}))
+
+const receiptIcon = (receipt) => receipt === 'sent' ? <Check className="single-check" /> : <span className={`double-check ${receipt === 'read' ? 'read' : ''}`}><Check /><Check /></span>
+
+function StatusBar({ time }) {
+  return <div className="status-bar"><b>{time || '21.52'}</b><div><span className="status-apps">● ●</span><Wifi /><span className="signal">▂▄▆</span><span className="battery">33</span></div></div>
+}
+
+function ChatPreview({ chat }) {
+  const previewRef = useRef(null)
+  const viewportRef = useRef(null)
+  const [fullscreen, setFullscreen] = useState(false)
+  const [fullscreenScale, setFullscreenScale] = useState(1)
+  const { profile, appearance, ui, messages } = chat
+  useEffect(() => {
+    if (!fullscreen) return
+    const resize = () => setFullscreenScale(viewportRef.current.clientWidth / 720)
+    resize()
+    window.addEventListener('resize', resize)
+    return () => window.removeEventListener('resize', resize)
+  }, [fullscreen])
+  const exportPng = async () => {
+    const dataUrl = await toPng(previewRef.current, { pixelRatio: 1, cacheBust: true })
+    const link = document.createElement('a')
+    link.download = 'wa-chat-simulasi.png'
+    link.href = dataUrl
+    link.click()
+  }
+  return <section className={`preview-wrap ${fullscreen ? 'fullscreen' : ''}`}><div className="preview-actions"><button type="button" className="preview-toggle" onClick={() => setFullscreen(!fullscreen)}>{fullscreen ? 'Tutup preview' : 'Preview layar penuh'}</button><button type="button" onClick={exportPng}><Download /> PNG</button></div><div className="preview-viewport" ref={viewportRef}><div className={`phone ${appearance.theme}`} ref={previewRef} style={fullscreen ? { transform: `scale(${fullscreenScale})` } : undefined}>
+    <StatusBar time={ui?.statusTime} />
+    <header className="chat-header"><ArrowLeft /><div className="avatar">{profile.photo ? <img src={profile.photo} alt="Foto kontak" /> : profile.name.slice(0, 1)}</div><div className="contact"><strong>{profile.name || 'Nama kontak'}</strong><small>{profile.presence}</small></div><div className="header-actions"><Video /><Phone /><MoreVertical /></div></header>
+    <main className={`messages ${appearance.wallpaper}`}><div className="simulation">SIMULASI</div><div className="date-chip">Hari ini</div><div className="encryption"><LockKeyhole /> Pesan dan telepon terenkripsi secara end-to-end. Hanya orang di obrolan ini yang bisa membaca, mendengarkan, atau membagikannya. <b>Pelajari selengkapnya.</b></div>{messages.map((message) => <div className={`message ${message.sender}`} key={message.id}><span>{message.text}</span><span className="meta">{message.time} {message.sender === 'me' && <i>{receiptIcon(message.receipt)}</i>}</span></div>)}</main>
+    <div className="composer"><div className="input"><Smile /><span>Ketik pesan</span><Paperclip /><Camera /></div><button type="button" aria-label="Rekam suara"><Mic /></button></div>
+    <div className="navigation"><span>◁</span><span>○</span><span>□</span></div>
+  </div></div></section>
+}
+
+function ProfileEditor({ chat }) {
+  const update = useChat((state) => state.update)
+  const photo = (event) => {
+    const file = event.target.files?.[0]
+    if (!file) return
+    const reader = new FileReader()
+    reader.onload = () => update('profile', { photo: reader.result })
+    reader.readAsDataURL(file)
+  }
+  return <div className="editor-form"><label>Foto kontak <span className="upload"><Image /> Upload<input type="file" accept="image/*" onChange={photo} /></span></label><label>Nama kontak<input value={chat.profile.name} onChange={(e) => update('profile', { name: e.target.value })} /></label><label>Nomor telepon<input value={chat.profile.phone} onChange={(e) => update('profile', { phone: e.target.value })} /></label><label>Status<select value={chat.profile.presence} onChange={(e) => update('profile', { presence: e.target.value })}><option value="online">online</option><option value="sedang mengetik...">sedang mengetik...</option><option value="terakhir dilihat hari ini pukul 20.30">terakhir dilihat hari ini pukul 20.30</option><option value="">Kosong</option></select></label></div>
+}
+
+function MessagesEditor({ chat }) {
+  const setMessages = useChat((state) => state.setMessages)
+  const change = (id, values) => setMessages(chat.messages.map((item) => item.id === id ? { ...item, ...values } : item))
+  const remove = (id) => setMessages(chat.messages.filter((item) => item.id !== id))
+  const add = () => setMessages([...chat.messages, { id: crypto.randomUUID(), sender: 'me', text: 'Pesan baru', time: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }).replace(':', '.'), receipt: 'sent' }])
+  const move = (index, direction) => { const next = [...chat.messages]; const target = index + direction; if (target < 0 || target >= next.length) return; [next[index], next[target]] = [next[target], next[index]]; setMessages(next) }
+  return <div className="message-editor"><button type="button" className="add" onClick={add}><Plus /> Tambah pesan</button>{chat.messages.map((message, index) => <article key={message.id}><div className="message-row"><GripVertical /><textarea value={message.text} aria-label="Isi pesan" onChange={(e) => change(message.id, { text: e.target.value })} /><button type="button" className="delete" aria-label="Hapus pesan" onClick={() => remove(message.id)}><Trash2 /></button></div><div className="message-controls"><select value={message.sender} onChange={(e) => change(message.id, { sender: e.target.value })}><option value="me">Saya</option><option value="contact">Kontak</option></select><input type="time" value={message.time.replace('.', ':')} onChange={(e) => change(message.id, { time: e.target.value.replace(':', '.') })} /><select value={message.receipt} onChange={(e) => change(message.id, { receipt: e.target.value })} disabled={message.sender === 'contact'}><option value="sent">Satu centang</option><option value="delivered">Dua abu-abu</option><option value="read">Dua biru</option></select><button type="button" onClick={() => move(index, -1)}>↑</button><button type="button" onClick={() => move(index, 1)}>↓</button></div></article>)}</div>
+}
+
+function AppearanceEditor({ chat }) {
+  const update = useChat((state) => state.update)
+  return <div className="editor-form choices"><label>Jam status bar<input type="time" value={(chat.ui?.statusTime || '21.52').replace('.', ':')} onChange={(e) => update('ui', { statusTime: e.target.value.replace(':', '.') })} /></label><label>Tema<div><button className={chat.appearance.theme === 'light' ? 'selected' : ''} type="button" onClick={() => update('appearance', { theme: 'light' })}>Terang</button><button className={chat.appearance.theme === 'dark' ? 'selected' : ''} type="button" onClick={() => update('appearance', { theme: 'dark' })}>Gelap</button></div></label><label>Wallpaper<select value={chat.appearance.wallpaper} onChange={(e) => update('appearance', { wallpaper: e.target.value })}><option value="doodle">Doodle WhatsApp</option><option value="plain">Polos</option><option value="mint">Mint</option></select></label></div>
+}
+
+function App() {
+  const chat = useChat((state) => state.chat)
+  const setChat = useChat((state) => state.setChat)
+  const [tab, setTab] = useState('profile')
+  useEffect(() => localStorage.setItem('wa-chat-studio', JSON.stringify(chat)), [chat])
+  const editor = useMemo(() => tab === 'profile' ? <ProfileEditor chat={chat} /> : tab === 'messages' ? <MessagesEditor chat={chat} /> : <AppearanceEditor chat={chat} />, [chat, tab])
+  const exportJson = () => { const blob = new Blob([JSON.stringify(chat, null, 2)], { type: 'application/json' }); const url = URL.createObjectURL(blob); const link = document.createElement('a'); link.href = url; link.download = 'wa-chat-session.json'; link.click(); URL.revokeObjectURL(url) }
+  const importJson = (event) => { const file = event.target.files?.[0]; if (!file) return; const reader = new FileReader(); reader.onload = () => { try { setChat(JSON.parse(reader.result)) } catch { window.alert('File JSON tidak valid.') } }; reader.readAsText(file); event.target.value = '' }
+  return <div className="app"><header className="toolbar"><div><strong>WA Chat Studio</strong><small>Editor simulasi</small></div><div><label className="icon-button" title="Import JSON"><FileUp /><input type="file" accept="application/json" onChange={importJson} /></label><button type="button" className="icon-button" title="Export JSON" onClick={exportJson}><FileDown /></button><span className="saved"><Save /> Tersimpan</span></div></header><div className="workspace"><ChatPreview chat={chat} /><aside className="editor"><div className="tabs">{[['profile', 'Profil'], ['messages', 'Pesan'], ['appearance', 'Tampilan']].map(([id, label]) => <button type="button" className={tab === id ? 'active' : ''} onClick={() => setTab(id)} key={id}>{label}</button>)}</div><div className="sheet-handle"><ChevronDown /></div><div className="editor-content"><h1>{tab === 'profile' ? 'Profil kontak' : tab === 'messages' ? 'Percakapan' : 'Tampilan chat'}</h1>{editor}</div></aside></div></div>
+}
+
+export default App
